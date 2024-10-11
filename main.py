@@ -1,10 +1,14 @@
 import asyncio
+import os
 from aiogram import Bot, Dispatcher, types
 from aiogram.filters import Command
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, WebAppInfo
 
-API_TOKEN = '7324883600:AAGAte1fdWr-yTTwH1dsMDIn5Ze4DII-JBY'
-ADMIN_ID = 1031182339  # Укажите ID администратора
+from keep_alive import keep_alive
+
+# Получение токена и ID администратора из переменных окружения
+API_TOKEN = os.getenv('API_TOKEN')
+ADMIN_ID = int(os.getenv('ADMIN_ID'))  # Убедитесь, что ADMIN_ID является целым числом
 
 bot = Bot(token=API_TOKEN)
 dp = Dispatcher()
@@ -15,10 +19,10 @@ async def start(message: types.Message):
     user_id = message.from_user.id
 
     if user_id == ADMIN_ID:
-        # Создаем кнопку для администратора
-        await message.answer(f'Здравствуйте, {user_name}!')
+        # Сообщение для администратора
+        await message.answer(f'Здравствуйте, {user_name}! Это сообщение для администратора.')
     else:
-        # Создаем онлайн-кнопку для клиента
+        # Онлайн-кнопка для клиента
         button = InlineKeyboardButton(
             text='Перейти в магазин',
             web_app=WebAppInfo(url='https://metalxshark.github.io/pageBot/')
@@ -30,4 +34,5 @@ async def main():
     await dp.start_polling(bot)
 
 if __name__ == '__main__':
+    keep_alive()  # Запуск веб-сервера для поддержки работы на Render.com
     asyncio.run(main())
